@@ -1,0 +1,81 @@
+
+server:
+  port: 0
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 190407011
+    url: jdbc:mysql://localhost:3306/order_database
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: update
+  application:
+    name: order-service
+
+  zipkin:
+    base-url: http://localhost:9441
+  sleuth:
+    sampler:
+      probability: 1.0
+
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    template:
+      default-topic: notificationTopic
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.JsonSerializer
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+
+management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: *
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+
+  tracing:
+    sampling:
+      probability: 1.0
+
+
+
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      inventory:
+        registerHealthIndicator: true
+        event-consumer-buffer-size: 10
+        slidingWindowType: count_based
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
+#  timelimiter:
+#    instances:
+#      timeout-duration: 3s
+#  timelimiter:
+#    instances:
+#      timeout-duration: 3s
+
+
+

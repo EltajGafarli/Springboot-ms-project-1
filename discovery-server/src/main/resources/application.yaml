@@ -1,0 +1,15 @@
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: localhost
+    appname: discovery-service
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0

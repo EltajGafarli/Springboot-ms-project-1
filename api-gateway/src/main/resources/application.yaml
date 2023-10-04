@@ -1,0 +1,74 @@
+eureka:
+  instance:
+    hostname: localhost
+    appname: api-gateway
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+spring:
+  #  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://localhost:8181/realms/spring-boot-microservice-realm
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/product
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order
+
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory
+
+
+        - id: discovery-service
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+
+        - id: discovery-service
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+      httpserver:
+        wiretap: true
+      httpclient:
+        wiretap: true
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+
+
+server:
+  port: 8082
+
+logging:
+  level:
+    root: error
+    reactor.netty: trace
+    org.springframework.cloud.gateway: trace
+    org.springframework.http.server.reactive: trace
+
+
+
+
